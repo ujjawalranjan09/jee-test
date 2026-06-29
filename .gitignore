@@ -1,0 +1,50 @@
+# Dependencies
+frontend/node_modules/
+backend/.venv/
+
+# Build output
+frontend/dist/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+backend/.env
+backend/.env.example
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+backend/server.log
+backend/*.log
+
+# Test coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# Temporary
+backend/fixtures/tmp/
+tmp/
+
+# Tool artifacts
+.hermes/
+.kiro/
+*.kiro

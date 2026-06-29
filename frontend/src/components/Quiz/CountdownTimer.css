@@ -1,0 +1,50 @@
+.countdown-timer {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-timer__sep {
+  color: var(--color-text-muted);
+  margin: 0 1px;
+}
+
+.countdown-timer__sign {
+  margin-right: 4px;
+  font-weight: 700;
+}
+
+.countdown-timer__digit {
+  display: inline-block;
+  min-width: 1.4ch;
+  text-align: center;
+}
+
+.countdown-timer--low {
+  color: var(--color-accent);
+}
+
+.countdown-timer--critical {
+  color: var(--color-incorrect);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.countdown-timer--overtime {
+  color: var(--color-incorrect);
+  background: rgba(220, 38, 38, 0.08);
+  padding: 0 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-incorrect);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}

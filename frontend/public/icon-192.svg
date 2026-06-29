@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <!-- rounded-square background -->
+  <rect width="192" height="192" rx="36" fill="url(#bg)"/>
+  <!-- open book / quiz sheet — page + lines -->
+  <g transform="translate(40 40)" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <!-- book/page outline -->
+    <path d="M8 100 V20 a8 8 0 0 1 8 -8 h50 a8 8 0 0 1 8 8 V100"/>
+    <path d="M114 100 V20 a8 8 0 0 0 -8 -8 H56 a8 8 0 0 0 -8 8 V100"/>
+    <!-- page base -->
+    <path d="M8 100 a8 8 0 0 0 8 8 h50 a8 8 0 0 1 8 8 v0 a8 8 0 0 1 -8 8 H16 a8 8 0 0 1 -8 -8 Z" fill="#ffffff"/>
+    <path d="M114 100 a8 8 0 0 1 -8 8 H56 a8 8 0 0 0 -8 8 v0 a8 8 0 0 0 8 8 h50 a8 8 0 0 0 8 -8 Z" fill="#ffffff"/>
+    <!-- prompt lines -->
+    <line x1="20" y1="34" x2="60" y2="34"/>
+    <line x1="20" y1="48" x2="80" y2="48"/>
+    <line x1="20" y1="62" x2="74" y2="62"/>
+    <!-- answer bubble (filled) on right side -->
+    <circle cx="92" cy="34" r="6" fill="#ffffff" stroke="none"/>
+    <circle cx="92" cy="48" r="4" stroke="#ffffff"/>
+    <circle cx="92" cy="62" r="4" stroke="#ffffff"/>
+  </g>
+</svg>

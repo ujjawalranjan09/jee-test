@@ -1,0 +1,130 @@
+# QuizForge — Render deployment
+#
+# This file provisions two services:
+#   1. pdf-quiz-generator-frontend — a Render Static Site serving the
+#      React/Vite build. Always-on, doesn't consume free instance-hours.
+#   2. pdf-quiz-generator-backend — a Render Web Service running FastAPI
+#      under uvicorn. Spins down after ~15 min of inactivity on the free
+#      tier; the first request after idle pays a cold-start penalty of
+#      30–60s.
+#
+# After the first deploy, Render prints two URLs of the form:
+#     https://pdf-quiz-generator-frontend.onrender.com
+#     https://pdf-quiz-generator-backend.onrender.com
+# If you rename either service, update BOTH the VITE_API_URL below
+# (frontend env) and the CORS_ORIGINS (backend env) to match.
+
+services:
+  # ─── FRONTEND (Static Site) ────────────────────────────────────────────
+  - type: static_site
+    name: pdf-quiz-generator-frontend
+    # `npm run build` now just runs `vite build` (the project had
+    # pre-existing TS errors in test/utility files that broke `tsc -b`;
+    # Vite uses esbuild to transpile and bundles fine without it).
+    buildCommand: cd frontend && npm install --no-audit --no-fund && npm run build
+    staticPublishPath: frontend/dist
+    # Tell Vite which backend URL to bake into the bundle at build time.
+    # If you fork this project, replace the value below with your own
+    # backend URL. Render bakes whatever is here into /assets/index-*.js.
+    envVars:
+      - key: VITE_API_URL
+        value: https://pdf-quiz-generator-backend.onrender.com
+    # SPA fallback — any path that doesn't match a static asset is served
+    # index.html so client-side routes work.
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      # Cache static assets aggressively. index.html must NOT be long-cached
+      # so users get new builds on refresh — Vite hashes the JS filenames
+      # so the URL itself changes per build.
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /sw.js
+        name: Cache-Control
+        value: no-cache
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache
+      - path: /manifest.webmanifest
+        name: Cache-Control
+        value: no-cache
+      # Required headers so the browser installs the app.
+      - path: /manifest.webmanifest
+        name: Content-Type
+        value: application/manifest+json
+      # Allow the service worker to be served from the site root scope.
+      - path: /sw.js
+        name: Service-Worker-Allowed
+        value: "/"
+      - path: /sw.js
+        name: X-Content-Type-Options
+        value: nosniff
+    # Tell Render this is a static site, not a SPA that needs the server.
+    # (No instanceType or plan key — Render picks Free for static sites.)
+
+  # ─── BACKEND (Web Service) ────────────────────────────────────────────
+  - type: web_service
+    name: pdf-quiz-generator-backend
+    runtime: python
+    plan: free           # 512 MB RAM, spins down after ~15 min idle
+    buildCommand: cd backend && pip install --no-cache-dir -r requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # Pin the Python version. Render's free tier supports 3.11/3.12/3.13.
+      # Keep this in sync with backend/.python-version.
+      - key: PYTHON_VERSION
+        value: "3.11"
+
+      # Restrict CORS to the deployed frontend origin. Without this the
+      # browser blocks the /api/* calls from the React app with a CORS
+      # error. Add localhost origins during local debugging if needed.
+      - key: CORS_ORIGINS
+        value: https://pdf-quiz-generator-frontend.onrender.com
+
+      # ── LLM provider selection ────────────────────────────────────────
+      # Pick ONE of these depending on which provider you have keys for.
+      # 'gemini'   — Google Gemini (legacy, quota-heavy on free tier)
+      # 'minimax'  — Xiaomi MiMo v2.5 via https://api.xiaomimimo.com/v1
+      #            (a Xiaomi MiMo key is required; MiMo gives each user a
+      #             small daily token budget that suits a free demo).
+      - key: LLM_PROVIDER
+        value: minimax
+
+      # ── Xiaomi MiMo (recommended) ─────────────────────────────────────
+      # Comma-separated list OR numbered slots (MIMO_API_KEY_1, _2, …).
+      # Add as many as you have to spread rate-limit pressure.
+      # ↓↓↓ REPLACE WITH YOUR OWN KEY ↓↓↓
+      - key: MIMO_API_KEY_1
+        sync: false       # sync:false makes Render mark this as a secret
+      # Add more MIMO_API_KEY_2, _3, … the same way if you have them.
+
+      # Optional overrides — defaults are sensible, uncomment to override.
+      # - key: MIMO_BASE_URL
+      #   value: https://api.xiaomimimo.com/v1
+      # - key: MIMO_MODEL
+      #   value: mimo-v2.5
+
+      # ── Free-tier pacing (lower = faster but may hit rate limits) ─────
+      - key: PROCESSING_TIMEOUT_SECONDS
+        value: "600"
+      - key: LLM_TIMEOUT_SECONDS
+        value: "120"
+      - key: LLM_INTER_BATCH_DELAY_SECONDS
+        value: "8"
+      - key: LLM_RETRY_BASE_DELAY_SECONDS
+        value: "10"
+      - key: LLM_MAX_RETRY_DELAY_SECONDS
+        value: "60"
+
+      # ── Size caps (defaults are fine; tweak only if needed) ──────────
+      - key: MAX_PDF_SIZE_BYTES
+        value: "20971520"     # 20 MB
+      - key: MAX_DIAGRAMS_PER_BATCH
+        value: "25"
+      - key: MAX_TEXT_CHARS_PER_BATCH
+        value: "800000"

@@ -1,0 +1,188 @@
+.admin-panel {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-lg, 1.5rem);
+}
+
+.admin-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md, 1rem);
+}
+
+.admin-panel__title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.admin-panel__intro {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary, #555);
+  line-height: 1.5;
+  margin-bottom: var(--space-lg, 1.5rem);
+}
+
+.admin-panel__intro code {
+  background: var(--color-surface-soft, #f4f4f5);
+  padding: 0 4px;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+
+.admin-panel__provider-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md, 1rem);
+  margin-bottom: var(--space-lg, 1.5rem);
+  padding: var(--space-md, 1rem);
+  background: var(--color-surface-soft, #f4f4f5);
+  border-radius: var(--radius-md, 8px);
+  flex-wrap: wrap;
+}
+
+.admin-panel__provider-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #555);
+}
+
+.admin-panel__provider-buttons {
+  display: flex;
+  gap: var(--space-xs, 0.5rem);
+  flex-wrap: wrap;
+}
+
+.admin-panel__provider-btn {
+  font-size: 0.875rem;
+}
+
+.admin-panel__provider-btn--active {
+  background: var(--color-accent, #4f46e5);
+  color: white;
+  border: none;
+}
+
+.admin-panel__card {
+  border: 1px solid var(--color-border, #e5e5e5);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-md, 1rem);
+  margin-bottom: var(--space-md, 1rem);
+  background: var(--color-surface, #fff);
+}
+
+.admin-panel__card--active {
+  border-color: var(--color-accent, #4f46e5);
+  box-shadow: 0 0 0 2px var(--color-accent-soft, rgba(79, 70, 229, 0.15));
+}
+
+.admin-panel__card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-md, 1rem);
+}
+
+.admin-panel__card-head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.admin-panel__card-meta {
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #888);
+}
+
+.admin-panel__current {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm, 0.5rem);
+  margin-bottom: var(--space-md, 1rem);
+  font-size: 0.875rem;
+}
+
+.admin-panel__current-label {
+  color: var(--color-text-secondary, #555);
+  font-weight: 600;
+}
+
+.admin-panel__current-value {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  background: var(--color-surface-soft, #f4f4f5);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.admin-panel__current-value em {
+  font-style: italic;
+  color: var(--color-text-muted, #888);
+}
+
+.admin-panel__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs, 0.4rem);
+  margin-bottom: var(--space-md, 1rem);
+}
+
+.admin-panel__field-label {
+  font-size: 0.825rem;
+  color: var(--color-text-secondary, #555);
+}
+
+.admin-panel__input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.9rem;
+  border: 1px solid var(--color-border, #d4d4d8);
+  border-radius: var(--radius-sm, 4px);
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #111);
+}
+
+.admin-panel__input:focus {
+  outline: none;
+  border-color: var(--color-accent, #4f46e5);
+  box-shadow: 0 0 0 2px var(--color-accent-soft, rgba(79, 70, 229, 0.2));
+}
+
+.admin-panel__actions {
+  display: flex;
+  gap: var(--space-sm, 0.5rem);
+  justify-content: flex-end;
+}
+
+.admin-panel__feedback {
+  margin-top: var(--space-md, 1rem);
+  padding: var(--space-sm, 0.75rem) var(--space-md, 1rem);
+  border-radius: var(--radius-sm, 4px);
+  font-size: 0.875rem;
+}
+
+.admin-panel__feedback--ok {
+  background: var(--color-correct-soft, #d1fae5);
+  color: var(--color-correct, #065f46);
+  border: 1px solid var(--color-correct, #10b981);
+}
+
+.admin-panel__feedback--err {
+  background: var(--color-incorrect-soft, #fee2e2);
+  color: var(--color-incorrect, #991b1b);
+  border: 1px solid var(--color-incorrect, #ef4444);
+}
+
+.admin-panel__loading,
+.admin-panel__error {
+  padding: var(--space-lg, 1.5rem);
+  text-align: center;
+  color: var(--color-text-secondary, #555);
+}
+
+.admin-panel__error code {
+  background: var(--color-surface-soft, #f4f4f5);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.85em;
+}

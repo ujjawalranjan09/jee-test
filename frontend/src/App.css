@@ -1,0 +1,215 @@
+.app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  /* Global safe-area insets — used as padding on bottom-anchored surfaces
+     so the iPhone home indicator / Android gesture bar never overlaps
+     interactive UI. */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+html, body, #root {
+  /* Prevent overscroll-bounce on iOS from showing blank background. */
+  background: var(--color-bg);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Stop iOS Safari from auto-zooming when the user taps an input whose
+   font-size is < 16px. */
+input, textarea, select {
+  font-size: max(16px, 1em);
+}
+
+/* ===== APP HEADER ===== */
+.app-header {
+  height: var(--header-height);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: var(--space-sm);
+}
+
+.app-header__logo {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.app-header__logo svg {
+  width: 24px;
+  height: 24px;
+}
+
+.app-header__nav {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.app-header__streak {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-accent-soft);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.app-header__theme-toggle {
+  font-size: 1.25rem;
+  min-height: 40px;
+  min-width: 40px;
+  padding: 0 var(--space-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-header__notebook-btn {
+  font-size: 1.125rem;
+  min-height: 40px;
+  min-width: 40px;
+  padding: 0 var(--space-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== MAIN CONTENT ===== */
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== LOADING SPINNER ===== */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.spinner--lg {
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== ALERT / TOAST ===== */
+.alert {
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.alert--error {
+  background: var(--color-incorrect-soft);
+  border: 1px solid var(--color-incorrect);
+  color: var(--color-incorrect);
+}
+
+.alert--info {
+  background: var(--color-info-soft);
+  border: 1px solid var(--color-info);
+  color: var(--color-info);
+}
+
+.alert--success {
+  background: var(--color-correct-soft);
+  border: 1px solid var(--color-correct);
+  color: var(--color-correct);
+}
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+}
+
+/* ===== BADGE ===== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge--accent {
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+}
+
+/* ===== LAYOUT HELPERS ===== */
+.container {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+}
+
+.container--wide {
+  max-width: 960px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-md);
+  }
+
+  .app-header {
+    padding: 0 var(--space-md);
+    height: 52px;
+  }
+
+  .app-header__logo {
+    font-size: 1.125rem;
+  }
+
+  /* The streak chip eats valuable horizontal space on a phone — drop
+     the number, keep just the flame emoji. */
+  .app-header__streak {
+    font-size: 1rem;
+    padding: 0 4px;
+  }
+}
+
+/* Tiny phones: shrink the brand wordmark even more */
+@media (max-width: 380px) {
+  .app-header__logo svg {
+    width: 20px;
+    height: 20px;
+  }
+  .app-header__streak {
+    /* Drop the streak entirely on the smallest screens — header is
+       already crowded with theme + notebook + back buttons. */
+    display: none;
+  }
+}

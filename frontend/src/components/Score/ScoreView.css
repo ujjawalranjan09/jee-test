@@ -1,0 +1,155 @@
+.score-view {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl) 0;
+}
+
+.score-view__card {
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.score-view__heading {
+  font-size: 1.75rem;
+  margin-bottom: var(--space-xl);
+  color: var(--color-text);
+}
+
+/* Ring */
+.score-view__ring {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  margin: 0 auto var(--space-xl);
+}
+
+.score-view__ring-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.score-view__ring-progress {
+  transition: stroke-dasharray 1s ease;
+}
+
+.score-view__ring-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-view__pct {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.score-view__grade {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Stats */
+.score-view__stats {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+}
+
+.score-view__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.score-view__stat-value {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.score-view__stat--correct .score-view__stat-value {
+  color: var(--color-correct);
+}
+
+.score-view__stat--incorrect .score-view__stat-value {
+  color: var(--color-incorrect);
+}
+
+.score-view__stat--unanswered .score-view__stat-value {
+  color: var(--color-text-muted);
+}
+
+.score-view__stat-label {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Actions */
+.score-view__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.score-view__actions .btn-primary,
+.score-view__actions .btn-secondary {
+  width: 100%;
+}
+
+/* ===== TOPIC BREAKDOWN ===== */
+/* Removed — topic breakdown is no longer shown on the score view. */
+
+/* ===== SHARE ===== */
+.score-view__share {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+/* ── PHONE LAYOUT (< 640px) ───────────────────────────────────── */
+@media (max-width: 640px) {
+  .score-view__card {
+    padding: var(--space-md);
+  }
+  .score-view__heading {
+    font-size: 1.25rem;
+  }
+  .score-view__ring {
+    width: 140px;
+    height: 140px;
+  }
+  .score-view__ring-svg {
+    width: 140px;
+    height: 140px;
+  }
+  .score-view__pct {
+    font-size: 1.75rem;
+  }
+  .score-view__stats {
+    gap: var(--space-sm);
+  }
+  .score-view__stat-value {
+    font-size: 1.5rem;
+  }
+  .score-view__actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+  .score-view__actions > * {
+    width: 100%;
+    justify-content: center;
+  }
+}

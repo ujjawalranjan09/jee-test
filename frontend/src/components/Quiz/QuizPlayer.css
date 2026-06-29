@@ -1,0 +1,885 @@
+/* =====================================================================
+ * QuizPlayer — redesigned layout (mobile-first).
+ *
+ * Layout:
+ *   ┌─────────────────────────────────────────────────────────┐
+ *   │ Top bar: [☰ N/M] [progress + counter] [timer|mode]    │
+ *   ├─────────────────────────────────────────────────────────┤
+ *   │                                                         │
+ *   │   ┌─ Question card (topic chip, prompt, diagrams) ─┐  │
+ *   │   └────────────────────────────────────────────────┘  │
+ *   │                                                         │
+ *   │   ┌─ Option A ────────────────────────────────────┐  │
+ *   │   ├─ Option B ────────────────────────────────────┤  │
+ *   │   ├─ Option C ────────────────────────────────────┤  │
+ *   │   └─ Option D ────────────────────────────────────┘  │
+ *   │                                                         │
+ *   ├─────────────────────────────────────────────────────────┤
+ *   │ Bottom bar: [☆ Mark] [← Prev]  [Next →]                │
+ *   └─────────────────────────────────────────────────────────┘
+ *
+ * The palette is a full-screen drawer on every breakpoint (no
+ * permanent sidebar that would steal horizontal space from the
+ * question).
+ * ===================================================================== */
+
+.quiz-player {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: calc(100dvh - var(--header-height));
+  background: var(--color-bg);
+  overflow: hidden;
+}
+
+/* ── TOP BAR ─────────────────────────────────────────────────────── */
+.qp-topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border-subtle);
+  flex-shrink: 0;
+  min-height: 56px;
+}
+
+.qp-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.qp-icon-btn:hover {
+  background: var(--color-surface-hover);
+}
+
+.qp-icon-btn:active {
+  transform: scale(0.97);
+}
+
+.qp-topbar__menu-count {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.02em;
+}
+
+.qp-topbar__center {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.qp-progress {
+  width: 100%;
+  height: 4px;
+  background: var(--color-surface-raised);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.qp-progress__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent) 0%, #fbbf24 100%);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.qp-topbar__meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qp-topbar__counter {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.01em;
+}
+
+.qp-topbar__counter strong {
+  color: var(--color-text);
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 0 2px;
+}
+
+.qp-topbar__counter-sep {
+  color: var(--color-text-muted);
+  margin: 0 4px;
+}
+
+.qp-topbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+/* ── BODY (scrollable question + options) ───────────────────────── */
+.qp-body {
+  overflow-y: auto;
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  /* iOS safe area on phones with notches */
+  padding-bottom: max(var(--space-md), env(safe-area-inset-bottom));
+}
+
+.qp-question-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.02) inset;
+}
+
+.qp-question-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.qp-topic-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.qp-bookmark-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  font-size: 1.25rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+}
+
+.qp-bookmark-btn:hover {
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.qp-bookmark-btn:active {
+  transform: scale(0.92);
+}
+
+.qp-bookmark-btn--active {
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.qp-prompt {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--color-text);
+  /* Let the Markdown component handle whitespace (it uses proper
+     block-level splitting). Don't use pre-wrap here or the rendered
+     HTML's own whitespace becomes visible. */
+  white-space: normal;
+}
+
+.qp-prompt p {
+  margin: 0 0 var(--space-md);
+}
+
+.qp-prompt p:last-child {
+  margin-bottom: 0;
+}
+
+.qp-prompt .md-math {
+  /* Inline math sits flush with surrounding text. */
+  display: inline;
+}
+
+.qp-prompt .md-math--block {
+  display: block;
+  margin: var(--space-sm) 0;
+  overflow-x: auto;
+  text-align: center;
+}
+
+.qp-diagrams {
+  display: grid;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.qp-diagram-btn {
+  display: block;
+  padding: 0;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  cursor: zoom-in;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.qp-diagram-btn:hover {
+  border-color: var(--color-accent);
+}
+
+.qp-diagram-btn:active {
+  transform: scale(0.99);
+}
+
+.qp-diagram-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 320px;
+  object-fit: contain;
+}
+
+/* ── OPTIONS ────────────────────────────────────────────────────── */
+.qp-options {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.qp-option {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  min-height: 56px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.qp-option:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+
+.qp-option:active {
+  transform: scale(0.99);
+}
+
+.qp-option--selected {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.qp-option__id {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 50%;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.qp-option--selected .qp-option__id {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-text-inverse);
+}
+
+.qp-option__text {
+  /* Allow math/text to wrap nicely. Markdown output handles its own
+     whitespace, so no pre-wrap here. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  font-feature-settings: "kern" 1;
+  flex: 1;
+  line-height: 1.5;
+}
+
+.qp-option__text p {
+  margin: 0;
+}
+
+.qp-option__text .md-math {
+  display: inline;
+}
+
+.qp-option__check {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  flex-shrink: 0;
+  position: relative;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.qp-option__check--on {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.qp-option__check--on::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 7px;
+  height: 13px;
+  border: solid var(--color-text-inverse);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ── BOTTOM BAR ──────────────────────────────────────────────────── */
+.qp-bottombar {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  padding-bottom: max(var(--space-sm), env(safe-area-inset-bottom));
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border-subtle);
+  flex-shrink: 0;
+}
+
+.qp-bottombar__btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 56px;
+  min-height: 52px;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+}
+
+.qp-bottombar__btn:active {
+  transform: scale(0.97);
+}
+
+.qp-bottombar__btn--ghost {
+  font-size: 1.125rem;
+}
+
+.qp-bottombar__btn.is-marked {
+  color: var(--color-marked);
+  background: var(--color-marked-soft);
+  border-color: rgba(167, 139, 250, 0.4);
+}
+
+.qp-bottombar__btn-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.qp-bottombar__nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+.qp-bottombar__nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 52px;
+  padding: 0 var(--space-md);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, transform 0.1s, opacity 0.15s;
+}
+
+.qp-bottombar__nav-btn:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+}
+
+.qp-bottombar__nav-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.qp-bottombar__nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.qp-bottombar__nav-btn--primary {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-text-inverse);
+}
+
+.qp-bottombar__nav-btn--primary:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+/* ── MODAL (confirm submit) ──────────────────────────────────────── */
+.qp-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: var(--space-md);
+  animation: qp-fade-in 0.18s ease;
+}
+
+.qp-modal-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: qp-pop-in 0.2s ease;
+}
+
+.qp-modal-card__title {
+  margin: 0 0 var(--space-sm);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.qp-modal-card__body {
+  margin: 0 0 var(--space-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+
+.qp-modal-card__warn {
+  margin: 0 0 var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-info-soft);
+  border: 1px solid var(--color-info);
+  border-radius: var(--radius-sm);
+  color: var(--color-info);
+  font-size: 0.875rem;
+}
+
+.qp-modal-card__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+.qp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 var(--space-md);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, transform 0.1s;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+  color: var(--color-text);
+}
+
+.qp-btn--ghost {
+  background: transparent;
+}
+
+.qp-btn--primary {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-text-inverse);
+}
+
+.qp-btn--primary:hover {
+  background: var(--color-accent-hover);
+}
+
+.qp-btn--ghost:hover {
+  background: var(--color-surface-hover);
+}
+
+.qp-btn:active {
+  transform: scale(0.98);
+}
+
+/* ── DIAGRAM OVERLAY ─────────────────────────────────────────────── */
+.qp-diagram-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  z-index: 400;
+  cursor: zoom-out;
+  animation: qp-fade-in 0.2s ease;
+}
+
+.qp-diagram-overlay__img {
+  max-width: 95vw;
+  max-height: 90vh;
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
+  object-fit: contain;
+}
+
+.qp-diagram-overlay__close {
+  position: absolute;
+  top: max(var(--space-md), env(safe-area-inset-top));
+  right: max(var(--space-md), env(safe-area-inset-right));
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 1.25rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.qp-diagram-overlay__close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes qp-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes qp-pop-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── DESKTOP (>= 720px) ──────────────────────────────────────────── */
+@media (min-width: 720px) {
+  .qp-body {
+    padding: var(--space-xl);
+    max-width: 760px;
+    width: 100%;
+    margin: 0 auto;
+    gap: var(--space-lg);
+  }
+
+  .qp-question-card {
+    padding: var(--space-xl);
+  }
+
+  .qp-prompt {
+    font-size: 1.125rem;
+  }
+
+  .qp-diagram-img {
+    max-height: 420px;
+  }
+
+  .qp-topbar {
+    padding: var(--space-md) var(--space-xl);
+  }
+
+  .qp-bottombar {
+    padding: var(--space-md) var(--space-xl);
+    max-width: 760px;
+    width: 100%;
+    margin: 0 auto;
+    background: transparent;
+    border-top: none;
+  }
+
+  /* On desktop, give the body some breathing room from the bottombar */
+  .quiz-player {
+    /* No change to grid — body still scrolls, bottombar still sticky */
+  }
+
+  .qp-options {
+    /* Two-column option grid on wide screens for shorter quizzes */
+  }
+}
+
+/* ── TINY PHONES (< 360px) ───────────────────────────────────────── */
+@media (max-width: 359px) {
+  .qp-topbar__menu-count {
+    display: none;
+  }
+
+  .qp-prompt {
+    font-size: 1rem;
+  }
+
+  .qp-bottombar__btn-label {
+    display: none;
+  }
+
+  .qp-bottombar__btn {
+    min-width: 48px;
+  }
+
+  /* On the smallest phones, collapse the source chip to just its icon
+     and drop the menu button label. The user can still read the full
+     label inside the question card header. */
+  .qp-source-chip--extracted,
+  .qp-source-chip--generated {
+    padding: 2px 5px;
+    font-size: 0.6875rem;
+  }
+
+  .qp-overall-timer__icon {
+    display: none;
+  }
+}
+
+/* ── PHONES (< 640px) — guard against topbar overflow ──────────────── */
+@media (max-width: 639px) {
+  .qp-topbar {
+    padding: 6px var(--space-sm);
+    gap: var(--space-xs);
+    min-height: 48px;
+  }
+
+  /* Stack the right-side cluster: lives indicator drops to a second row
+     if there's a timer, otherwise it stays inline. */
+  .qp-topbar__right {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* Compact the count-down display font on small screens. */
+  .countdown-timer {
+    font-size: 1.125rem;
+  }
+
+  /* When both timers are showing, drop the hour part (rare anyway) and
+     tighten the overall-timer pill. */
+  .qp-overall-timer {
+    padding: 1px 5px;
+  }
+
+  /* The bottom navigation becomes more touch-friendly. */
+  .qp-bottombar {
+    padding: var(--space-sm) var(--space-md);
+    padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0px));
+    gap: var(--space-xs);
+  }
+
+  .qp-bottombar__btn {
+    min-height: 48px;
+  }
+
+  /* Prompt: comfortable line-height for thumb-reading. */
+  .qp-prompt {
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  /* Options are full-width on phones for easier tapping. */
+  .qp-option {
+    padding: 0.85rem 1rem;
+    min-height: 56px;
+  }
+
+  .qp-option__text {
+    font-size: 0.9375rem;
+  }
+
+  /* Compact the question card so more prompt fits above the fold. */
+  .qp-question-card {
+    padding: var(--space-md);
+  }
+
+  .qp-question-card__head {
+    gap: 4px;
+  }
+}
+
+/* ── OVERALL QUIZ TIMER (topbar) ───────────────────────────────── */
+.qp-overall-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-hover);
+}
+
+.qp-overall-timer__icon {
+  font-size: 0.875rem;
+}
+
+/* ── QUESTION PROVENANCE CHIPS ─────────────────────────────────── */
+.qp-source-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.qp-source-chip--extracted {
+  background: var(--color-info-soft);
+  color: var(--color-info);
+  border: 1px solid var(--color-info);
+}
+
+.qp-source-chip--generated {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+}
+
+/* ── QUESTION TYPE CHIPS ──────────────────────────────────────────── */
+/* Indicates whether to pick one, pick many, or type a number. Sits
+   next to the source-mode chip in the question card header. */
+
+.qp-type-chip {
+  font-weight: 600;
+}
+
+.qp-type-chip--multiple {
+  background: var(--color-warning-soft, rgba(245, 158, 11, 0.15));
+  color: var(--color-warning, #b45309);
+  border: 1px solid var(--color-warning, #f59e0b);
+}
+
+.qp-type-chip--numerical {
+  background: var(--color-success-soft, rgba(16, 185, 129, 0.15));
+  color: var(--color-success, #047857);
+  border: 1px solid var(--color-success, #10b981);
+}
+
+/* ── NUMERICAL INPUT ──────────────────────────────────────────────────── */
+
+.qp-numerical {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md) 0;
+}
+
+.qp-numerical__label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.qp-numerical__input {
+  width: 100%;
+  max-width: 320px;
+  padding: 12px 16px;
+  font-size: 1.125rem;
+  font-family: "Space Grotesk", "DM Sans", system-ui, sans-serif;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.qp-numerical__input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.qp-numerical__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Remove the default number input spinners on desktop — typing is cleaner */
+.qp-numerical__input::-webkit-outer-spin-button,
+.qp-numerical__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.qp-numerical__input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.qp-numerical__preview {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  padding-left: 2px;
+}
+
+.qp-numerical__preview strong {
+  color: var(--color-accent);
+  font-family: "Space Grotesk", monospace;
+}

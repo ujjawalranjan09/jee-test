@@ -1,0 +1,45 @@
+{
+  "name": "QuizForge — PDF Quiz Generator",
+  "short_name": "QuizForge",
+  "description": "Turn any PDF into a smart MCQ quiz. Pick lives, timers, exact vs generated questions, save mistakes to your notebook.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#6366f1",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New quiz",
+      "url": "/",
+      "description": "Upload a PDF and start a fresh quiz"
+    }
+  ]
+}

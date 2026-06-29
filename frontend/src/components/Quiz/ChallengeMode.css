@@ -1,0 +1,29 @@
+.lives-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-incorrect-soft);
+  border-radius: var(--radius-sm);
+}
+
+.lives-indicator__heart {
+  font-size: 1rem;
+  transition: transform var(--transition-fast);
+}
+
+.lives-indicator__heart--alive {
+  /* Subtle heartbeat when a life is just lost — optional polish. */
+}
+
+.lives-indicator__heart--dead {
+  opacity: 0.4;
+  transform: scale(0.9);
+}
+
+.lives-indicator__text {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-incorrect);
+  margin-left: var(--space-xs);
+}

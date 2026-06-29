@@ -1,0 +1,228 @@
+/* =====================================================================
+ * QuestionPalette — single full-screen drawer that works on every
+ * breakpoint (no permanent sidebar eating horizontal space on desktop).
+ * ===================================================================== */
+
+.palette-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: 199;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.palette-backdrop--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.palette-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 100vw);
+  background: var(--color-surface);
+  border-left: 1px solid var(--color-border);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.4);
+  padding: var(--space-lg);
+  z-index: 200;
+  transform: translateX(100%);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.palette-drawer--open {
+  transform: translateX(0);
+}
+
+/* ── HEADER ──────────────────────────────────────────────────────── */
+.palette-drawer__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.palette-drawer__title-block {
+  min-width: 0;
+}
+
+.palette-drawer__title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.palette-drawer__subtitle {
+  margin: 4px 0 0;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.palette-drawer__close {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: 1.125rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+}
+
+.palette-drawer__close:hover {
+  background: var(--color-surface-hover);
+}
+
+/* ── LEGEND ──────────────────────────────────────────────────────── */
+.palette-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-md);
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.palette-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.palette-legend__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.palette-legend__dot--unanswered {
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+}
+
+.palette-legend__dot--answered {
+  background: var(--color-correct);
+}
+
+.palette-legend__dot--marked {
+  background: var(--color-marked);
+}
+
+.palette-legend__dot--answeredAndMarked {
+  background: linear-gradient(135deg, var(--color-correct) 50%, var(--color-marked) 50%);
+}
+
+.palette-legend--topics {
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.palette-topic-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+/* ── GRID ────────────────────────────────────────────────────────── */
+.palette__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.palette__btn {
+  aspect-ratio: 1;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  min-width: 48px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+  /* Topic color stripe on the left (when set inline via --topic-color) */
+  border-left-width: 4px;
+  border-left-color: var(--topic-color, var(--color-border-subtle));
+  transition: background 0.15s, transform 0.1s, border-color 0.15s;
+}
+
+.palette__btn:hover {
+  background: var(--color-surface-hover);
+  transform: translateY(-1px);
+}
+
+.palette__btn:active {
+  transform: scale(0.96);
+}
+
+.palette__btn--unanswered {
+  background: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+}
+
+.palette__btn--answered {
+  background: var(--color-correct);
+  color: white;
+  border-color: var(--color-correct);
+  border-left-color: var(--color-correct);
+}
+
+.palette__btn--markedForReview {
+  background: var(--color-marked-soft);
+  color: var(--color-marked);
+  border-color: var(--color-marked);
+  border-left-color: var(--color-marked);
+}
+
+.palette__btn--answeredAndMarked {
+  background: linear-gradient(135deg, var(--color-correct) 50%, var(--color-marked) 50%);
+  color: white;
+  border-color: var(--color-marked);
+  border-left-color: var(--color-marked);
+}
+
+.palette__btn--current {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--color-accent-soft);
+}
+
+/* ── TABLET / DESKTOP ────────────────────────────────────────────── */
+@media (min-width: 720px) {
+  .palette-drawer {
+    width: 440px;
+    padding: var(--space-xl);
+    gap: var(--space-lg);
+  }
+}
